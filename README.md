@@ -36,21 +36,19 @@ Model-based deep learning (MoDL) unrolls regularized dipole inversion into alter
 
 ---
 
-## 📂 Mapping Paper Tables & Figures to Code
+## 📂 Experiments & Code Mapping
 
-Every experiment, table row, and figure in the paper is reproducible using the scripts below:
-
-| Paper Reference | Description | Code Script / Module |
-| :--- | :--- | :--- |
-| **Figure 1** | Framework Architecture & Two-Stage Pipeline | `figures_generation/fig1_two_stage_qsm_paradigm.png` |
-| **Table I** | Parameter Footprint Complexity ($K=3$) | `qsm_modules/qsm_dw_models/WideResnet.py` |
-| **Table II** | Source SNU Reconstruction Metrics | `stage2_lora_adaptation/train_shared_spinet_with_stage_lora.py`<br>`stage2_lora_adaptation/test_checkpoint.py` |
-| **Table III** | Zero-Shot Cross-Domain Evaluation (32 LPCNN Volumes) | `cross_domain_lpcnn/eval_lpcnn_models.py` |
-| **Table IV** | Single-Subject Calibration & Generalization (Subjects 5–8) | `cross_domain_lpcnn/train_target_adapt_lpcnn_p2_val_p4.py`<br>`cross_domain_lpcnn/eval_lpcnn_alpha16.py` |
-| **Table IV (Baselines)** | Full Shared & Unshared Fine-Tuning Baselines | `cross_domain_lpcnn/baselines/train_target_adapt_shared_base.py`<br>`cross_domain_lpcnn/baselines/train_target_adapt_unshared_isdu.py` |
-| **Table V** | GPU Memory, Optimizer States, and Inference Latency | `benchmarks_and_profiling/profile_all_memory.py` |
-| **Figure 2** | LPCNN Holdout Reconstructions & Error Difference Maps | `figures_generation/generate_figure3_lpcnn.py` |
-| **Figure 3** | Validation Convergence & Stage-Wise $\lambda_k$ Evolution | `figures_generation/plot_figure4.py` |
+| Experiment / Task | Implementation Script / Module |
+| :--- | :--- |
+| **Framework Architecture Pipeline** | `figures_generation/fig1_two_stage_qsm_paradigm.png` |
+| **Parameter Footprint Complexity ($K=3$)** | `qsm_modules/qsm_dw_models/WideResnet.py` |
+| **Source SNU In-Domain LoRA Training & Evaluation** | `stage2_lora_adaptation/train_shared_spinet_with_stage_lora.py`<br>`stage2_lora_adaptation/test_checkpoint.py` |
+| **Zero-Shot Cross-Domain Evaluation (32 LPCNN Volumes)** | `cross_domain_lpcnn/eval_lpcnn_models.py` |
+| **Single-Subject Calibration & Holdout Testing (Subjects 5–8)** | `cross_domain_lpcnn/train_target_adapt_lpcnn_p2_val_p4.py`<br>`cross_domain_lpcnn/eval_lpcnn_alpha16.py` |
+| **Full Shared & Unshared Fine-Tuning Baselines** | `cross_domain_lpcnn/baselines/train_target_adapt_shared_base.py`<br>`cross_domain_lpcnn/baselines/train_target_adapt_unshared_isdu.py` |
+| **GPU Memory, Optimizer States, and Inference Latency Profiling** | `benchmarks_and_profiling/profile_all_memory.py` |
+| **LPCNN Holdout Reconstructions & Error Difference Maps** | `figures_generation/generate_figure3_lpcnn.py` |
+| **Validation Convergence & Stage-Wise $\lambda_k$ Evolution Plotting** | `figures_generation/plot_figure4.py` |
 
 ---
 
