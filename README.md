@@ -2,7 +2,6 @@
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.12+-ee4c2c.svg)](https://pytorch.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Official code repository for:
 **"A Two-Stage Learning Paradigm for Model-Based QSM Reconstruction: From Shared Foundation Priors to Stage-Specific LoRA Adaptation"**  
