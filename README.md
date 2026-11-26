@@ -4,9 +4,7 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.12+-ee4c2c.svg)](https://pytorch.org/)
 
 Official code repository for:
-**"A Two-Stage Learning Paradigm for Model-Based QSM Reconstruction: From Shared Foundation Priors to Stage-Specific LoRA Adaptation"**  
-*Venkatesh Vaddadi and Phaneendra K. Yalavarthy*  
-*Medical Imaging Group (MIG), Department of Computational and Data Sciences, Indian Institute of Science (IISc), Bangalore, India.*
+**"A Two-Stage Learning Paradigm for Model-Based QSM Reconstruction: From Shared Foundation Priors to Stage-Specific LoRA Adaptation"**
 
 ---
 
