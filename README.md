@@ -98,27 +98,8 @@ Evaluate generalization across holdout Subjects 5, 6, 7, and 8:
 python cross_domain_lpcnn/eval_lpcnn_alpha16.py
 ```
 
-### 5. Memory Profiling & Inference Latency Benchmarks (Table V)
+### 5. Memory Profiling & Inference Latency Benchmarks
 Profile GPU memory allocation, optimizer states, and inference latency on 3D volumes:
 ```bash
 python benchmarks_and_profiling/profile_all_memory.py
 ```
-
----
-
-## 📄 Citation
-
-```bibtex
-@article{vaddadi2026loraqsm,
-  title={A Two-Stage Learning Paradigm for Model-Based QSM Reconstruction: From Shared Foundation Priors to Stage-Specific LoRA Adaptation},
-  author={Vaddadi, Venkatesh and Yalavarthy, Phaneendra K.},
-  journal={NMR in Biomedicine},
-  year={2026}
-}
-```
-
----
-
-## ✉️ Contact
-- **Venkatesh Vaddadi**: `venkateshvaddadi254@gmail.com`
-- **Prof. Phaneendra K. Yalavarthy**: `yalavarthy@iisc.ac.in`
