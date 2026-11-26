@@ -1,22 +1,126 @@
-# LoRA-QSM: Two-Stage Learning Paradigm for Model-Based QSM Reconstruction
+# LoRA-QSM: A Two-Stage Learning Paradigm for Model-Based QSM Reconstruction
 
-PyTorch implementation for stage-specific low-rank adaptation in unrolled Quantitative Susceptibility Mapping.
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-1.12+-ee4c2c.svg)](https://pytorch.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
-- **Stage 1 (Foundation)**: Unrolled 3D CNN denoiser with shared weights and scalar regularizer.
-- **Stage 2 (LoRA Adaptation)**: Frozen backbone with stage-specific low-rank updates and individual regularizers.
+Official code repository for:
+**"A Two-Stage Learning Paradigm for Model-Based QSM Reconstruction: From Shared Foundation Priors to Stage-Specific LoRA Adaptation"**  
+*Venkatesh Vaddadi and Phaneendra K. Yalavarthy*  
+*Medical Imaging Group (MIG), Department of Computational and Data Sciences, Indian Institute of Science (IISc), Bangalore, India.*
 
-## Code Structure
-- `qsm_modules/`: Core denoisers, dipole physics operator, and loss functions.
-- `stage1_foundation/`: Stage 1 baseline pre-training.
-- `stage2_lora_adaptation/`: Stage 2 in-domain low-rank adaptation (Table II).
-- `cross_domain_lpcnn/`: LPCNN zero-shot transfer (Table III) and single-subject calibration (Table IV).
-- `benchmarks_and_profiling/`: GPU memory and latency profiling (Table V).
-- `figures_generation/`: Scripts for plotting reconstruction figures and loss curves.
+---
 
-## Installation
+## 📌 Method Overview
+
+Model-based deep learning (MoDL) unrolls regularized dipole inversion into alternating denoising and data-consistency steps. However, existing unrolled physics networks face a trade-off:
+- **Weight-Shared Networks**: Enforce identical denoiser weights across all iterations, sacrificing stage specialization despite evolving artifact distributions.
+- **Fully Unshared Networks**: Train independent deep backbones per stage, leading to a $K$-fold parameter explosion and higher risk of overfitting or representation drift.
+
+**LoRA-QSM** resolves this challenge using a **Two-Stage Learning Paradigm**:
+1. **Stage 1 (Foundation Prior)**: Trains a 3D CNN denoiser with shared weights $\mathbf{W}_0$ and a single regularizer $\lambda$ across all unrolling iterations.
+2. **Stage 2 (Stage-Specific Adaptation)**: The foundation backbone is frozen ($\nabla_{\mathbf{W}_0}\mathcal{L} = \mathbf{0}$). Lightweight 3D Low-Rank Adaptation (LoRA) modules ($\Delta \mathbf{W}_k = \frac{\alpha}{r}\mathbf{B}_k \star \mathbf{A}_k$) and stage-wise regularizers $\lambda_k$ are attached to each unrolled step via forward hooks.
+
+<p align="center">
+  <img src="figures_generation/fig1_two_stage_qsm_paradigm.png" width="95%" alt="LoRA-QSM Framework">
+</p>
+
+---
+
+## 🚀 Key Results
+
+- **86.95% Trainable Parameter Reduction per Stage**: Reduces trainable parameters per stage from 447,234 to 58,336 ($r=4$).
+- **In-Domain Stage Specialization (Table II)**: Evaluated across 30 full 3D volumes on the SNU benchmark, stage-specific LoRA improves over the shared foundation baseline ($0.9145$ vs. $0.9121$ SSIM, $41.35\text{ dB}$ vs. $41.14\text{ dB}$ PSNR) with only $39.1\%$ parameter overhead.
+- **Single-Subject Target Calibration (Table IV)**: Calibrating adapters on patches from a single subject on the independent 7T LPCNN cohort generalizes across 16 unseen holdout volumes, reducing RMSE from $55.28\%$ to **$51.42\%$** while matching full backbone fine-tuning.
+- **Zero-Latency Merged Inference (Table V)**: Adapter weights fold offline into the backbone ($\mathbf{W}_{k,\text{eval}} = \mathbf{W}_0 + \frac{\alpha}{r}\mathbf{B}_k \star \mathbf{A}_k$), guaranteeing **0 additional FLOPs and 0 runtime latency penalty** ($1.04\text{ s}$ per 3D volume on an RTX 3090).
+
+---
+
+## 📂 Mapping Paper Tables & Figures to Code
+
+Every experiment, table row, and figure in the paper is reproducible using the scripts below:
+
+| Paper Reference | Description | Code Script / Module |
+| :--- | :--- | :--- |
+| **Figure 1** | Framework Architecture & Two-Stage Pipeline | `figures_generation/fig1_two_stage_qsm_paradigm.png` |
+| **Table I** | Parameter Footprint Complexity ($K=3$) | `qsm_modules/qsm_dw_models/WideResnet.py` |
+| **Table II** | Source SNU Reconstruction Metrics | `stage2_lora_adaptation/train_shared_spinet_with_stage_lora.py`<br>`stage2_lora_adaptation/test_checkpoint.py` |
+| **Table III** | Zero-Shot Cross-Domain Evaluation (32 LPCNN Volumes) | `cross_domain_lpcnn/eval_lpcnn_models.py` |
+| **Table IV** | Single-Subject Calibration & Generalization (Subjects 5–8) | `cross_domain_lpcnn/train_target_adapt_lpcnn_p2_val_p4.py`<br>`cross_domain_lpcnn/eval_lpcnn_alpha16.py` |
+| **Table IV (Baselines)** | Full Shared & Unshared Fine-Tuning Baselines | `cross_domain_lpcnn/baselines/train_target_adapt_shared_base.py`<br>`cross_domain_lpcnn/baselines/train_target_adapt_unshared_isdu.py` |
+| **Table V** | GPU Memory, Optimizer States, and Inference Latency | `benchmarks_and_profiling/profile_all_memory.py` |
+| **Figure 2** | LPCNN Holdout Reconstructions & Error Difference Maps | `figures_generation/generate_figure3_lpcnn.py` |
+| **Figure 3** | Validation Convergence & Stage-Wise $\lambda_k$ Evolution | `figures_generation/plot_figure4.py` |
+
+---
+
+## 💻 Installation
+
+Clone this repository and install dependencies:
 ```bash
 git clone https://github.com/venkateshvaddadi/LoRA-QSM.git
 cd LoRA-QSM
 pip install -r requirements.txt
 ```
+
+---
+
+## 🏃 Quick Start & Execution
+
+### 1. Stage 1: Shared Foundation Model Pre-training
+Train the shared foundation backbone across all $K=3$ iterations:
+```bash
+python stage1_foundation/train_stage1_shared_foundation.py
+```
+
+### 2. Stage 2: Stage-Specific In-Domain LoRA Adaptation
+Freeze the foundation weights and train stage-specific low-rank adapters on the SNU benchmark:
+```bash
+# Rank 4, Alpha 8.0 (Table II)
+python stage2_lora_adaptation/train_shared_spinet_with_stage_lora.py
+
+# High-gain coupling (Alpha 16.0)
+python stage2_lora_adaptation/train_lora_r4_alpha16.py
+python stage2_lora_adaptation/train_lora_r8_alpha16.py
+```
+
+### 3. Cross-Domain Zero-Shot Evaluation (Table III)
+Evaluate models directly on the 7T multi-orientation LPCNN benchmark:
+```bash
+python cross_domain_lpcnn/eval_lpcnn_models.py
+```
+
+### 4. Single-Subject Target Domain Calibration (Table IV)
+Calibrate lightweight adapters on patches from a single target subject (e.g., Subject 2) with Subject 4 validation:
+```bash
+python cross_domain_lpcnn/train_target_adapt_lpcnn_p2_val_p4.py
+```
+Evaluate generalization across holdout Subjects 5, 6, 7, and 8:
+```bash
+python cross_domain_lpcnn/eval_lpcnn_alpha16.py
+```
+
+### 5. Memory Profiling & Inference Latency Benchmarks (Table V)
+Profile GPU memory allocation, optimizer states, and inference latency on 3D volumes:
+```bash
+python benchmarks_and_profiling/profile_all_memory.py
+```
+
+---
+
+## 📄 Citation
+
+```bibtex
+@article{vaddadi2026loraqsm,
+  title={A Two-Stage Learning Paradigm for Model-Based QSM Reconstruction: From Shared Foundation Priors to Stage-Specific LoRA Adaptation},
+  author={Vaddadi, Venkatesh and Yalavarthy, Phaneendra K.},
+  journal={NMR in Biomedicine},
+  year={2026}
+}
+```
+
+---
+
+## ✉️ Contact
+- **Venkatesh Vaddadi**: `venkateshvaddadi254@gmail.com`
+- **Prof. Phaneendra K. Yalavarthy**: `yalavarthy@iisc.ac.in`
