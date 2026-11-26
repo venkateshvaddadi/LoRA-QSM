@@ -1,0 +1,35 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Large checkpoints / model files (keep README and small metadata)
+*.pth
+*.pt
+*.ckpt
+!pretrained_weights/*.md
+
+# Data directories and volumetric files
+*.nii
+*.nii.gz
+*.mat
+*.h5
+*.hdf5
+data/
+raw_data/
+
+# OS / IDE artifacts
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Execution logs
+*.log
+nohup.out
