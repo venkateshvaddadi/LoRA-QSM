@@ -26,15 +26,6 @@ Model-based deep learning (MoDL) unrolls regularized dipole inversion into alter
 
 ---
 
-## 🚀 Key Results
-
-- **86.95% Trainable Parameter Reduction per Stage**: Reduces trainable parameters per stage from 447,234 to 58,336 ($r=4$).
-- **In-Domain Stage Specialization (Table II)**: Evaluated across 30 full 3D volumes on the SNU benchmark, stage-specific LoRA improves over the shared foundation baseline ($0.9145$ vs. $0.9121$ SSIM, $41.35\text{ dB}$ vs. $41.14\text{ dB}$ PSNR) with only $39.1\%$ parameter overhead.
-- **Single-Subject Target Calibration (Table IV)**: Calibrating adapters on patches from a single subject on the independent 7T LPCNN cohort generalizes across 16 unseen holdout volumes, reducing RMSE from $55.28\%$ to **$51.42\%$** while matching full backbone fine-tuning.
-- **Zero-Latency Merged Inference (Table V)**: Adapter weights fold offline into the backbone ($\mathbf{W}_{k,\text{eval}} = \mathbf{W}_0 + \frac{\alpha}{r}\mathbf{B}_k \star \mathbf{A}_k$), guaranteeing **0 additional FLOPs and 0 runtime latency penalty** ($1.04\text{ s}$ per 3D volume on an RTX 3090).
-
----
-
 ## 📂 Experiments & Code Mapping
 
 | Experiment / Task | Implementation Script / Module |
